@@ -20,21 +20,6 @@ https://messmate-jyhn.onrender.com
 
 ---
 
-# 📸 Screenshots
-
-> Add screenshots here after uploading them.
-
-- Login Page
-- Dashboard
-- Student Management
-- Attendance Page
-- Menu Management
-- Complaints
-- Notices
-- Activities
-
----
-
 # ✨ Features
 
 ## 👤 Authentication
