@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("../middleware/authMiddleware");
-const admin = require("../middleware/adminMiddleware");
 
 const { getDashboard } = require("../controllers/dashboardController");
 
-router.get("/", auth, admin, getDashboard);
+// Both Admin and Student can view dashboard
+router.get("/", auth, getDashboard);
 
 module.exports = router;

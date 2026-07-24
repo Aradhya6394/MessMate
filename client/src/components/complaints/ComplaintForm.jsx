@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 function ComplaintForm({
     onSubmit,
     initialData,
     isEditing,
-    students,
 }) {
 
+    const { user } = useAuth();
+    const isAdmin = user?.role === "admin";
+
     const [formData, setFormData] = useState({
-        student: "",
         title: "",
         description: "",
         category: "Other",
@@ -20,16 +22,15 @@ function ComplaintForm({
         if (isEditing && initialData) {
 
             setFormData({
-                student: initialData.student?._id || "",
-                title: initialData.title,
-                description: initialData.description,
-                category: initialData.category,
-                status: initialData.status,
+                title: initialData.title || "",
+                description: initialData.description || "",
+                category: initialData.category || "Other",
+                status: initialData.status || "Pending",
             });
 
         }
 
-    }, [initialData]);
+    }, [initialData, isEditing]);
 
     const handleChange = (e) => {
 
@@ -52,88 +53,68 @@ function ComplaintForm({
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
-            <select
-                name="student"
-                value={formData.student}
-                onChange={handleChange}
-                className="w-full border rounded-xl p-3"
-                disabled={isEditing}
-            >
+            {!isAdmin && (
+                <>
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="Complaint Title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        className="w-full border rounded-xl p-3"
+                        required
+                    />
 
-                <option value="">Select Student</option>
+                    <textarea
+                        rows="4"
+                        name="description"
+                        placeholder="Description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        className="w-full border rounded-xl p-3"
+                        required
+                    />
 
-                {students.map((student) => (
-
-                    <option
-                        key={student._id}
-                        value={student._id}
+                    <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="w-full border rounded-xl p-3"
                     >
-                        {student.name}
-                    </option>
+                        <option>Food</option>
+                        <option>Hostel</option>
+                        <option>Electricity</option>
+                        <option>Water</option>
+                        <option>Cleaning</option>
+                        <option>Other</option>
+                    </select>
+                </>
+            )}
 
-                ))}
-
-            </select>
-
-            <input
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="Complaint Title"
-                className="w-full border rounded-xl p-3"
-            />
-
-            <textarea
-                rows="4"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Description"
-                className="w-full border rounded-xl p-3"
-            />
-
-            <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full border rounded-xl p-3"
-            >
-
-                <option>Food</option>
-                <option>Hostel</option>
-                <option>Electricity</option>
-                <option>Water</option>
-                <option>Cleaning</option>
-                <option>Other</option>
-
-            </select>
-
-            {isEditing && (
-
+            {isAdmin && isEditing && (
                 <select
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
                     className="w-full border rounded-xl p-3"
                 >
-
                     <option>Pending</option>
                     <option>In Progress</option>
                     <option>Resolved</option>
-
                 </select>
-
             )}
 
-            <button className="w-full bg-orange-500 text-white rounded-xl py-3">
-
+            <button
+                type="submit"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl py-3 font-semibold"
+            >
                 {isEditing ? "Update Complaint" : "Submit Complaint"}
-
             </button>
 
         </form>
 
     );
+
 }
 
 export default ComplaintForm;

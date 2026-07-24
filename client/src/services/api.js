@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://messmate-jyhn.onrender.com",
+    baseURL: "http://localhost:5000",
 });
 
 api.interceptors.request.use((config) => {
@@ -13,7 +13,6 @@ api.interceptors.request.use((config) => {
     }
 
     return config;
-
 });
 
 export default api;

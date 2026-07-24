@@ -6,20 +6,21 @@ function ComplaintModal({
     onSubmit,
     initialData,
     isEditing,
-    students,
 }) {
+
     if (!open) return null;
 
     return (
+
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
 
             <div className="bg-white rounded-3xl p-8 w-[600px] shadow-2xl">
 
-                <div className="flex justify-between mb-6">
+                <div className="flex justify-between items-center mb-6">
 
                     <h2 className="text-2xl font-bold">
 
-                        {isEditing ? "Update Complaint" : "Add Complaint"}
+                        {isEditing ? "Update Complaint" : "Submit Complaint"}
 
                     </h2>
 
@@ -36,13 +37,14 @@ function ComplaintModal({
                     onSubmit={onSubmit}
                     initialData={initialData}
                     isEditing={isEditing}
-                    students={students}
                 />
 
             </div>
 
         </div>
+
     );
+
 }
 
 export default ComplaintModal;

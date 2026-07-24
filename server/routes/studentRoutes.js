@@ -17,9 +17,12 @@ const {
     deleteStudent
 } = require("../controllers/studentController");
 
-// Admin Only
-router.get("/", auth, admin, getStudents);
-router.get("/:id", auth, admin, getStudentById);
+
+
+router.get("/", auth, getStudents);
+router.get("/:id", auth, getStudentById);
+
+
 
 router.post(
     "/",
@@ -39,6 +42,11 @@ router.put(
     updateStudent
 );
 
-router.delete("/:id", auth, admin, deleteStudent);
+router.delete(
+    "/:id",
+    auth,
+    admin,
+    deleteStudent
+);
 
 module.exports = router;

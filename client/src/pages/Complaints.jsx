@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
+
 import MainLayout from "../layouts/MainLayout";
 import ComplaintModal from "../components/complaints/ComplaintModal";
 
@@ -10,19 +12,19 @@ import {
   deleteComplaint,
 } from "../services/complaintService";
 
-import { getStudents } from "../services/studentService";
-
 function Complaints() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
+
   const [complaints, setComplaints] = useState([]);
-  const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [openModal, setOpenModal] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetchComplaints();
-    fetchStudents();
   }, []);
 
   const fetchComplaints = async () => {
@@ -31,29 +33,24 @@ function Complaints() {
       setComplaints(data);
     } catch (error) {
       console.log(error);
+      toast.error("Failed to load complaints");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchStudents = async () => {
-    try {
-      const data = await getStudents();
-      setStudents(data);
-    } catch (error) {
-      console.log(error);
     }
   };
 
   const handleAddComplaint = async (complaint) => {
     try {
       await addComplaint(complaint);
-      toast.success("Complaint Added Successfully");
+
+      toast.success("Complaint Submitted Successfully");
+
       setOpenModal(false);
+
       fetchComplaints();
     } catch (error) {
       console.log(error);
-      toast.error("Failed to Add Complaint");
+      toast.error("Failed to Submit Complaint");
     }
   };
 
@@ -75,12 +72,13 @@ function Complaints() {
   };
 
   const handleDeleteComplaint = async (id) => {
-    const confirmDelete = window.confirm("Delete this complaint?");
-    if (!confirmDelete) return;
+    if (!window.confirm("Delete this complaint?")) return;
 
     try {
       await deleteComplaint(id);
+
       toast.success("Complaint Deleted Successfully");
+
       fetchComplaints();
     } catch (error) {
       console.log(error);
@@ -95,32 +93,53 @@ function Complaints() {
           <h1 className="text-4xl font-bold text-stone-800">
             Complaints
           </h1>
+
           <p className="text-stone-500 mt-2">
-            Manage all student complaints.
+            {isAdmin
+              ? "Manage all student complaints."
+              : "Track your complaints."}
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            setOpenModal(true);
-            setSelectedComplaint(null);
-            setIsEditing(false);
-          }}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl shadow"
-        >
-          + Add Complaint
-        </button>
+        {!isAdmin && (
+          <button
+            onClick={() => {
+              setOpenModal(true);
+              setSelectedComplaint(null);
+              setIsEditing(false);
+            }}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl shadow"
+          >
+            + Add Complaint
+          </button>
+        )}
       </div>
 
       <div className="bg-white rounded-3xl shadow-lg border border-stone-200 overflow-hidden">
         <table className="w-full">
           <thead className="bg-orange-50">
             <tr>
-              <th className="px-6 py-4 text-left">Student</th>
-              <th className="px-6 py-4 text-left">Title</th>
-              <th className="px-6 py-4 text-left">Category</th>
-              <th className="px-6 py-4 text-left">Status</th>
-              <th className="px-6 py-4 text-center">Actions</th>
+              <th className="px-6 py-4 text-left">
+                Student
+              </th>
+
+              <th className="px-6 py-4 text-left">
+                Title
+              </th>
+
+              <th className="px-6 py-4 text-left">
+                Category
+              </th>
+
+              <th className="px-6 py-4 text-left">
+                Status
+              </th>
+
+              {isAdmin && (
+                <th className="px-6 py-4 text-center">
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
 
@@ -128,10 +147,19 @@ function Complaints() {
             {loading ? (
               <tr>
                 <td
-                  colSpan="5"
+                  colSpan={isAdmin ? 5 : 4}
                   className="text-center py-10"
                 >
                   Loading...
+                </td>
+              </tr>
+            ) : complaints.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={isAdmin ? 5 : 4}
+                  className="text-center py-10 text-gray-500"
+                >
+                  No Complaints Found
                 </td>
               </tr>
             ) : (
@@ -148,6 +176,7 @@ function Complaints() {
                     <div className="font-semibold">
                       {complaint.title}
                     </div>
+
                     <div className="text-sm text-gray-500 mt-1">
                       {complaint.description}
                     </div>
@@ -164,7 +193,8 @@ function Complaints() {
                       className={`px-3 py-1 rounded-full text-sm font-medium ${
                         complaint.status === "Resolved"
                           ? "bg-green-100 text-green-700"
-                          : complaint.status === "In Progress"
+                          : complaint.status ===
+                            "In Progress"
                           ? "bg-yellow-100 text-yellow-700"
                           : "bg-red-100 text-red-700"
                       }`}
@@ -173,29 +203,35 @@ function Complaints() {
                     </span>
                   </td>
 
-                  <td className="px-6 py-5">
-                    <div className="flex justify-center gap-3">
-                      <button
-                        onClick={() => {
-                          setSelectedComplaint(complaint);
-                          setIsEditing(true);
-                          setOpenModal(true);
-                        }}
-                        className="px-3 py-1 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200"
-                      >
-                        Edit
-                      </button>
+                  {isAdmin && (
+                    <td className="px-6 py-5">
+                      <div className="flex justify-center gap-3">
+                        <button
+                          onClick={() => {
+                            setSelectedComplaint(
+                              complaint
+                            );
+                            setIsEditing(true);
+                            setOpenModal(true);
+                          }}
+                          className="px-3 py-1 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200"
+                        >
+                          Edit
+                        </button>
 
-                      <button
-                        onClick={() =>
-                          handleDeleteComplaint(complaint._id)
-                        }
-                        className="px-3 py-1 rounded-lg bg-red-100 text-red-600 hover:bg-red-200"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+                        <button
+                          onClick={() =>
+                            handleDeleteComplaint(
+                              complaint._id
+                            )
+                          }
+                          className="px-3 py-1 rounded-lg bg-red-100 text-red-600 hover:bg-red-200"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
@@ -203,22 +239,37 @@ function Complaints() {
         </table>
       </div>
 
-      <ComplaintModal
-        open={openModal}
-        onClose={() => {
-          setOpenModal(false);
-          setSelectedComplaint(null);
-          setIsEditing(false);
-        }}
-        onSubmit={
-          isEditing
-            ? handleUpdateComplaint
-            : handleAddComplaint
-        }
-        initialData={selectedComplaint}
-        isEditing={isEditing}
-        students={students}
-      />
+      {!isAdmin && (
+        <ComplaintModal
+          open={openModal}
+          onClose={() => {
+            setOpenModal(false);
+            setSelectedComplaint(null);
+            setIsEditing(false);
+          }}
+          onSubmit={
+            isEditing
+              ? handleUpdateComplaint
+              : handleAddComplaint
+          }
+          initialData={selectedComplaint}
+          isEditing={isEditing}
+        />
+      )}
+
+      {isAdmin && (
+        <ComplaintModal
+          open={openModal}
+          onClose={() => {
+            setOpenModal(false);
+            setSelectedComplaint(null);
+            setIsEditing(false);
+          }}
+          onSubmit={handleUpdateComplaint}
+          initialData={selectedComplaint}
+          isEditing={true}
+        />
+      )}
     </MainLayout>
   );
 }

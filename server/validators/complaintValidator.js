@@ -2,10 +2,6 @@ const { body, validationResult } = require("express-validator");
 
 const validateComplaint = [
 
-    body("student")
-        .notEmpty()
-        .withMessage("Student ID is required"),
-
     body("title")
         .trim()
         .notEmpty()

@@ -1,6 +1,15 @@
 import { FiBell, FiSearch } from "react-icons/fi";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function TopNavbar() {
+
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const name = user?.name || "Guest";
+  const role = user?.role || "student";
+
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-stone-200 shadow-sm">
 
@@ -39,22 +48,25 @@ function TopNavbar() {
 
           </button>
 
-          <div className="flex items-center gap-3">
+          <div
+            onClick={() => navigate("/profile")}
+            className="flex items-center gap-3 cursor-pointer hover:bg-stone-100 px-3 py-2 rounded-xl transition"
+            >
 
             <div className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white font-semibold flex items-center justify-center shadow">
 
-              A
+              {name.charAt(0).toUpperCase()}
 
             </div>
 
             <div>
 
               <h4 className="font-semibold text-stone-700">
-                Aradhya Patel
+                {name}
               </h4>
 
               <p className="text-sm text-stone-500">
-                Administrator
+                {role === "admin" ? "Administrator" : "Student"}
               </p>
 
             </div>

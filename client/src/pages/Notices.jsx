@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 
 import MainLayout from "../layouts/MainLayout";
 import NoticeModal from "../components/notices/NoticeModal";
@@ -12,6 +13,9 @@ import {
 } from "../services/noticeService";
 
 function Notices() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
+
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +34,6 @@ function Notices() {
   const fetchNotices = async () => {
     try {
       const data = await getNotices();
-
       setNotices(data);
     } catch (error) {
       toast.error("Failed to load notices");
@@ -70,7 +73,10 @@ function Notices() {
 
       fetchNotices();
     } catch (error) {
-      toast.error("Update Failed");
+      toast.error(
+        error.response?.data?.message ||
+          "Update Failed"
+      );
     }
   };
 
@@ -83,8 +89,11 @@ function Notices() {
       toast.success("Notice Deleted");
 
       fetchNotices();
-    } catch {
-      toast.error("Delete Failed");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Delete Failed"
+      );
     }
   };
 
@@ -114,16 +123,18 @@ function Notices() {
             className="border rounded-xl px-4 py-3 w-72"
           />
 
-          <button
-            onClick={() => {
-              setSelectedNotice(null);
-              setIsEditing(false);
-              setOpenModal(true);
-            }}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl"
-          >
-            + Add Notice
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => {
+                setSelectedNotice(null);
+                setIsEditing(false);
+                setOpenModal(true);
+              }}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl"
+            >
+              + Add Notice
+            </button>
+          )}
         </div>
       </div>
 
@@ -180,47 +191,51 @@ function Notices() {
                 {notice.description}
               </p>
 
-              <div className="flex justify-end gap-5 mt-8">
-                <button
-                  onClick={() => {
-                    setSelectedNotice(notice);
-                    setIsEditing(true);
-                    setOpenModal(true);
-                  }}
-                  className="text-blue-600 hover:underline"
-                >
-                  Edit
-                </button>
+              {isAdmin && (
+                <div className="flex justify-end gap-5 mt-8">
+                  <button
+                    onClick={() => {
+                      setSelectedNotice(notice);
+                      setIsEditing(true);
+                      setOpenModal(true);
+                    }}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Edit
+                  </button>
 
-                <button
-                  onClick={() =>
-                    handleDeleteNotice(notice._id)
-                  }
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
+                  <button
+                    onClick={() =>
+                      handleDeleteNotice(notice._id)
+                    }
+                    className="text-red-600 hover:underline"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))
         )}
       </div>
 
-      <NoticeModal
-        open={openModal}
-        onClose={() => {
-          setOpenModal(false);
-          setSelectedNotice(null);
-          setIsEditing(false);
-        }}
-        onSubmit={
-          isEditing
-            ? handleUpdateNotice
-            : handleAddNotice
-        }
-        initialData={selectedNotice}
-        isEditing={isEditing}
-      />
+      {isAdmin && (
+        <NoticeModal
+          open={openModal}
+          onClose={() => {
+            setOpenModal(false);
+            setSelectedNotice(null);
+            setIsEditing(false);
+          }}
+          onSubmit={
+            isEditing
+              ? handleUpdateNotice
+              : handleAddNotice
+          }
+          initialData={selectedNotice}
+          isEditing={isEditing}
+        />
+      )}
     </MainLayout>
   );
 }

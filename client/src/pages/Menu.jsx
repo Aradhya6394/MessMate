@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
+
 import MainLayout from "../layouts/MainLayout";
 import MenuModal from "../components/menu/MenuModal";
 
@@ -11,6 +13,9 @@ import {
 } from "../services/menuService";
 
 function Menu() {
+
+    const { user } = useAuth();
+    const isAdmin = user?.role === "admin";
 
     const [menus, setMenus] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,28 +29,18 @@ function Menu() {
     }, []);
 
     const fetchMenus = async () => {
-
         try {
-
             const data = await getMenu();
             setMenus(data);
-
         } catch (error) {
-
             console.log(error);
-
         } finally {
-
             setLoading(false);
-
         }
-
     };
 
     const handleAddMenu = async (menu) => {
-
         try {
-
             await addMenu(menu);
 
             toast.success("Menu Added Successfully");
@@ -53,37 +48,25 @@ function Menu() {
             setOpenModal(false);
 
             fetchMenus();
-
         } catch (error) {
-
             toast.error("Failed to add menu");
-
         }
-
     };
 
     const handleUpdateMenu = async (menu) => {
-
         try {
-
             await updateMenu(selectedMenu._id, menu);
 
             toast.success("Menu Updated Successfully");
 
             setOpenModal(false);
-
             setSelectedMenu(null);
-
             setIsEditing(false);
 
             fetchMenus();
-
         } catch (error) {
-
             toast.error("Update Failed");
-
         }
-
     };
 
     const handleDeleteMenu = async (id) => {
@@ -103,7 +86,6 @@ function Menu() {
             toast.error("Delete Failed");
 
         }
-
     };
 
     return (
@@ -124,23 +106,18 @@ function Menu() {
 
                 </div>
 
-                <button
-
-                    onClick={() => {
-
-                        setIsEditing(false);
-                        setSelectedMenu(null);
-                        setOpenModal(true);
-
-                    }}
-
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl shadow"
-
-                >
-
-                    + Add Menu
-
-                </button>
+                {isAdmin && (
+                    <button
+                        onClick={() => {
+                            setIsEditing(false);
+                            setSelectedMenu(null);
+                            setOpenModal(true);
+                        }}
+                        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-xl shadow"
+                    >
+                        + Add Menu
+                    </button>
+                )}
 
             </div>
 
@@ -160,7 +137,11 @@ function Menu() {
 
                             <th className="px-6 py-4 text-left">Dinner</th>
 
-                            <th className="px-6 py-4 text-center">Actions</th>
+                            {isAdmin && (
+                                <th className="px-6 py-4 text-center">
+                                    Actions
+                                </th>
+                            )}
 
                         </tr>
 
@@ -173,7 +154,7 @@ function Menu() {
                             <tr>
 
                                 <td
-                                    colSpan="5"
+                                    colSpan={isAdmin ? 5 : 4}
                                     className="text-center py-10"
                                 >
 
@@ -193,70 +174,50 @@ function Menu() {
                                 >
 
                                     <td className="px-6 py-5 font-semibold">
-
                                         {menu.day}
-
                                     </td>
 
                                     <td className="px-6 py-5">
-
                                         {menu.breakfast}
-
                                     </td>
 
                                     <td className="px-6 py-5">
-
                                         {menu.lunch}
-
                                     </td>
 
                                     <td className="px-6 py-5">
-
                                         {menu.dinner}
-
                                     </td>
 
-                                    <td className="px-6 py-5">
+                                    {isAdmin && (
+                                        <td className="px-6 py-5">
 
-                                        <div className="flex justify-center gap-3">
+                                            <div className="flex justify-center gap-3">
 
-                                            <button
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedMenu(menu);
+                                                        setIsEditing(true);
+                                                        setOpenModal(true);
+                                                    }}
+                                                    className="px-3 py-1 rounded-lg bg-blue-100 text-blue-700"
+                                                >
+                                                    Edit
+                                                </button>
 
-                                                onClick={() => {
+                                                <button
+                                                    onClick={() =>
+                                                        handleDeleteMenu(menu._id)
+                                                    }
+                                                    className="px-3 py-1 rounded-lg bg-red-100 text-red-600"
+                                                >
+                                                    Delete
+                                                </button>
 
-                                                    setSelectedMenu(menu);
+                                            </div>
 
-                                                    setIsEditing(true);
-
-                                                    setOpenModal(true);
-
-                                                }}
-
-                                                className="px-3 py-1 rounded-lg bg-blue-100 text-blue-700"
-
-                                            >
-
-                                                Edit
-
-                                            </button>
-
-                                            <button
-
-                                                onClick={() =>
-                                                    handleDeleteMenu(menu._id)
-                                                }
-
-                                                className="px-3 py-1 rounded-lg bg-red-100 text-red-600"
-
-                                            >
-
-                                                Delete
-
-                                            </button>
-
-                                        </div>
-
-                                    </td>
+                                        </td>
+                                    )}
 
                                 </tr>
 
@@ -270,29 +231,23 @@ function Menu() {
 
             </div>
 
-            <MenuModal
-
-                open={openModal}
-
-                onClose={() => {
-
-                    setOpenModal(false);
-                    setSelectedMenu(null);
-                    setIsEditing(false);
-
-                }}
-
-                onSubmit={
-                    isEditing
-                        ? handleUpdateMenu
-                        : handleAddMenu
-                }
-
-                initialData={selectedMenu}
-
-                isEditing={isEditing}
-
-            />
+            {isAdmin && (
+                <MenuModal
+                    open={openModal}
+                    onClose={() => {
+                        setOpenModal(false);
+                        setSelectedMenu(null);
+                        setIsEditing(false);
+                    }}
+                    onSubmit={
+                        isEditing
+                            ? handleUpdateMenu
+                            : handleAddMenu
+                    }
+                    initialData={selectedMenu}
+                    isEditing={isEditing}
+                />
+            )}
 
         </MainLayout>
 

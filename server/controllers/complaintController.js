@@ -1,16 +1,33 @@
 const Complaint = require("../models/Complaint");
+const Student = require("../models/Student");
 const AppError = require("../utils/AppError");
 const logActivity = require("../utils/activityLogger");
 
+// ==========================
 // Create Complaint
+// ==========================
 const createComplaint = async (req, res, next) => {
     try {
 
-        const complaint = await Complaint.create(req.body);
+        // Find the student using logged in user's email
+        const student = await Student.findOne({
+            email: req.user.email
+        });
+
+        if (!student) {
+            return next(new AppError("Student not found", 404));
+        }
+
+        const complaint = await Complaint.create({
+            student: student._id,
+            title: req.body.title,
+            description: req.body.description,
+            category: req.body.category
+        });
 
         await logActivity(
             "Complaint Submitted",
-            `A new complaint has been submitted.`,
+            `${student.name} submitted a complaint.`,
             "Complaint",
             "alert"
         );
@@ -26,11 +43,14 @@ const createComplaint = async (req, res, next) => {
     }
 };
 
-// Get All Complaints
+// ==========================
+// Get Complaints
+// ==========================
 const getComplaints = async (req, res, next) => {
     try {
 
-        const complaints = await Complaint.find().populate("student");
+        const complaints = await Complaint.find()
+            .populate("student");
 
         res.status(200).json({
             success: true,
@@ -43,7 +63,9 @@ const getComplaints = async (req, res, next) => {
     }
 };
 
-// Update Complaint Status
+// ==========================
+// Update Complaint
+// ==========================
 const updateComplaint = async (req, res, next) => {
     try {
 
@@ -78,7 +100,9 @@ const updateComplaint = async (req, res, next) => {
     }
 };
 
+// ==========================
 // Delete Complaint
+// ==========================
 const deleteComplaint = async (req, res, next) => {
     try {
 
@@ -90,7 +114,7 @@ const deleteComplaint = async (req, res, next) => {
 
         await logActivity(
             "Complaint Deleted",
-            `A complaint has been deleted.`,
+            "A complaint has been deleted.",
             "Complaint",
             "delete"
         );

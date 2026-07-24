@@ -7,17 +7,15 @@ const tabs = [
   { name: "Menu", path: "/menu" },
   { name: "Complaints", path: "/complaints" },
   { name: "Notices", path: "/notices" },
+  
   { name: "Contact", path: "/contact" },
 ];
 
 function NavigationTabs() {
   return (
     <div className="bg-white shadow-sm">
-
       <div className="max-w-7xl mx-auto flex gap-4 px-8 py-4">
-
         {tabs.map((tab) => (
-
           <NavLink
             key={tab.name}
             to={tab.path}
@@ -31,11 +29,8 @@ function NavigationTabs() {
           >
             {tab.name}
           </NavLink>
-
         ))}
-
       </div>
-
     </div>
   );
 }

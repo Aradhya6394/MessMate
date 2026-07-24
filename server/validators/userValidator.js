@@ -14,7 +14,10 @@ const validateRegister = [
         .isLength({ min: 6 })
         .withMessage("Password must be at least 6 characters"),
 
+    // Role is optional because every registered user
+    // will automatically become a student.
     body("role")
+        .optional()
         .isIn(["admin", "student"])
         .withMessage("Role must be admin or student")
 ];

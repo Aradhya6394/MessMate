@@ -1,4 +1,8 @@
+import { useAuth } from "../../context/AuthContext";
+
 function DashboardHeader() {
+
+    const { user } = useAuth();
 
     const today = new Date();
 
@@ -32,7 +36,7 @@ function DashboardHeader() {
                     {greeting},
 
                     <span className="text-amber-600">
-                        {" "}Aradhya
+                        {" "}{user?.name || "User"}
                     </span>
 
                 </h1>
@@ -46,9 +50,7 @@ function DashboardHeader() {
             <div className="rounded-2xl bg-white border border-stone-200 px-8 py-5 shadow-md">
 
                 <p className="text-stone-600 font-medium">
-
                     {formattedDate}
-
                 </p>
 
             </div>

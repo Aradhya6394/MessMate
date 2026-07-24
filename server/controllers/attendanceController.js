@@ -2,23 +2,58 @@ const Attendance = require("../models/Attendance");
 const AppError = require("../utils/AppError");
 const logActivity = require("../utils/activityLogger");
 
-// Mark Attendance
+// ===============================
+// Save / Update Today's Attendance
+// ===============================
 const markAttendance = async (req, res, next) => {
     try {
 
-        const attendance = await Attendance.insertMany(req.body);
+        const attendanceData = req.body;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const savedAttendance = [];
+
+        for (const item of attendanceData) {
+
+            const attendance = await Attendance.findOneAndUpdate(
+                {
+                    student: item.student,
+                    date: {
+                        $gte: today,
+                        $lt: tomorrow
+                    }
+                },
+                {
+                    breakfast: item.breakfast,
+                    lunch: item.lunch,
+                    dinner: item.dinner,
+                    date: today
+                },
+                {
+                    new: true,
+                    upsert: true
+                }
+            );
+
+            savedAttendance.push(attendance);
+        }
 
         await logActivity(
-            "Attendance Marked",
-            `${attendance.length} students' attendance has been marked.`,
+            "Attendance Updated",
+            `${savedAttendance.length} students' attendance has been updated.`,
             "Attendance",
             "calendar"
         );
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: "Attendance saved successfully",
-            data: attendance
+            data: savedAttendance
         });
 
     } catch (error) {
@@ -26,11 +61,24 @@ const markAttendance = async (req, res, next) => {
     }
 };
 
-// Get All Attendance
+// ===================================
+// Get ONLY Today's Attendance
+// ===================================
 const getAttendance = async (req, res, next) => {
     try {
 
-        const attendance = await Attendance.find().populate("student");
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const attendance = await Attendance.find({
+            date: {
+                $gte: today,
+                $lt: tomorrow
+            }
+        }).populate("student");
 
         res.status(200).json({
             success: true,

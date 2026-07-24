@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import Logo from "./Logo";
 import InputField from "./InputField";
@@ -24,7 +24,7 @@ function LoginCard() {
 
             const data = await loginUser(email, password);
 
-            login(data.token);
+            login(data.token, data.user);
 
             alert("Login Successful");
 
@@ -92,6 +92,22 @@ function LoginCard() {
                     text="Login"
                     onClick={handleLogin}
                 />
+            </div>
+
+            {/* Register Link */}
+            <div className="mt-6 text-center text-white">
+
+                <span className="text-white/80">
+                    Don't have an account?{" "}
+                </span>
+
+                <Link
+                    to="/register"
+                    className="font-semibold text-orange-300 hover:text-orange-200 transition"
+                >
+                    Register
+                </Link>
+
             </div>
 
         </div>
