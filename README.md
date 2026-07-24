@@ -1,16 +1,28 @@
-# 🍽️ MessMate - Hostel Mess Management System
+# 🍽️ MessMate – Smart Hostel Mess Management System
 
-![React](https://img.shields.io/badge/React-19-blue?logo=react)
-![Node.js](https://img.shields.io/badge/Node.js-Express-green?logo=node.js)
-![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
+![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb)
 ![JWT](https://img.shields.io/badge/Auth-JWT-orange)
+![Vercel](https://img.shields.io/badge/Frontend-Vercel-black?logo=vercel)
+![Render](https://img.shields.io/badge/Backend-Render-46E3B7?logo=render)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
-MessMate is a full-stack MERN (MongoDB, Express.js, React.js, Node.js) web application designed to simplify hostel mess management. It enables administrators to manage students, attendance, daily menus, complaints, notices, and activities through a centralized dashboard while providing students with an easy-to-use interface.
+MessMate is a full-stack **MERN (MongoDB, Express.js, React.js, Node.js)** application that simplifies hostel mess management by providing one centralized platform for students and administrators.
+
+It helps manage:
+
+- 👨‍🎓 Students
+- 📅 Attendance
+- 🍛 Daily Menu
+- 📝 Complaints
+- 📢 Notices
+- 👤 User Authentication
+- 📊 Dashboard Statistics
 
 ---
 
-## 🌐 Live Demo
+# 🌐 Live Demo
 
 ### Frontend
 https://mess-mate-xi-seven.vercel.app/
@@ -20,95 +32,135 @@ https://messmate-jyhn.onrender.com
 
 ---
 
+# 📸 Screenshots
+
+> *(Add screenshots here later)*
+
+- Login Page
+- Dashboard
+- Student Management
+- Attendance
+- Complaint Management
+- Profile Page
+
+---
+
 # ✨ Features
 
-## 👤 Authentication
+## 🔐 Authentication
+
 - Secure JWT Authentication
-- Login & Registration
+- User Registration
+- User Login
 - Protected Routes
-- Role Based Authorization
-- Token Storage
+- Role-Based Authorization
+- Persistent Login using JWT
+
+---
+
+## 👤 User Profile
+
+- View Logged-in User Profile
+- User Information
+- Role Display
+- Dynamic Profile Avatar
 
 ---
 
 ## 👨‍🎓 Student Management
+
 - Add Students
 - Edit Student Details
 - Delete Students
-- View Student List
 - Search Students
+- View Student List
 
 ---
 
 ## 📅 Attendance Management
-- Mark Attendance
-- Daily Attendance Records
-- Attendance History
+
+- Mark Daily Attendance
+- View Attendance Records
 - Attendance Statistics
 
 ---
 
-## 🍛 Daily Menu
-- Add Menu
-- Update Menu
+## 🍛 Daily Menu Management
+
+- Add Daily Menu
+- Edit Menu
 - Delete Menu
 - View Today's Menu
 
 ---
 
-## 📢 Notice Board
-- Create Notices
-- Update Notices
-- Delete Notices
-- View Latest Notices
-
----
-
-## 🎉 Activities
-- Add Events
-- Update Activities
-- Delete Activities
-- Display Upcoming Events
-
----
-
 ## 📝 Complaint Management
-- Register Complaints
-- Track Complaint Status
-- Resolve Complaints
+
+- Register Complaint
+- View Complaints
+- Update Complaint Status
+- Delete Complaint
+
+---
+
+## 📢 Notice Board
+
+- Create Notice
+- Update Notice
+- Delete Notice
+- Display Latest Notices
 
 ---
 
 ## 📊 Dashboard
-- Student Count
+
+Dashboard includes quick statistics like:
+
+- Total Students
 - Attendance Summary
-- Complaint Statistics
-- Notices Overview
-- Activity Overview
+- Today's Menu
+- Complaints Overview
+- Notices
 
 ---
 
-# 🛠 Tech Stack
+# 🛠️ Tech Stack
 
 ## Frontend
+
 - React.js
-- Vite
-- React Router
+- React Router DOM
 - Axios
-- CSS
+- Context API
+- Tailwind CSS
+- Vite
+
+---
 
 ## Backend
+
 - Node.js
 - Express.js
-- JWT Authentication
-- Mongoose
-
-## Database
 - MongoDB Atlas
+- Mongoose
+- JWT Authentication
+- bcryptjs
+
+---
 
 ## Deployment
-- Frontend → Vercel
-- Backend → Render
+
+Frontend
+
+- Vercel
+
+Backend
+
+- Render
+
+Database
+
+- MongoDB Atlas
 
 ---
 
@@ -121,10 +173,13 @@ MessMate
 │   ├── public
 │   ├── src
 │   │
-│   ├── components
-│   ├── pages
-│   ├── services
 │   ├── assets
+│   ├── components
+│   ├── context
+│   ├── layouts
+│   ├── pages
+│   ├── routes
+│   ├── services
 │   ├── App.jsx
 │   └── main.jsx
 │
@@ -135,6 +190,7 @@ MessMate
 │   ├── models
 │   ├── routes
 │   ├── utils
+│   ├── validators
 │   ├── server.js
 │   └── package.json
 │
@@ -159,17 +215,19 @@ cd MessMate
 
 # Backend Setup
 
+Move to server
+
 ```bash
 cd server
 ```
 
-Install packages
+Install dependencies
 
 ```bash
 npm install
 ```
 
-Create a `.env`
+Create a `.env` file
 
 ```env
 PORT=5000
@@ -189,11 +247,13 @@ npm run dev
 
 # Frontend Setup
 
+Move to client
+
 ```bash
 cd client
 ```
 
-Install packages
+Install dependencies
 
 ```bash
 npm install
@@ -205,7 +265,7 @@ Create `.env`
 VITE_API_URL=https://messmate-jyhn.onrender.com
 ```
 
-Run
+Run Frontend
 
 ```bash
 npm run dev
@@ -213,7 +273,7 @@ npm run dev
 
 ---
 
-# 🚀 Build
+# 🚀 Production Build
 
 Frontend
 
@@ -236,6 +296,7 @@ npm start
 ```
 POST /users/register
 POST /users/login
+GET  /users/profile
 ```
 
 ---
@@ -243,9 +304,9 @@ POST /users/login
 ## Students
 
 ```
-GET /students
-POST /students
-PUT /students/:id
+GET    /students
+POST   /students
+PUT    /students/:id
 DELETE /students/:id
 ```
 
@@ -254,9 +315,9 @@ DELETE /students/:id
 ## Attendance
 
 ```
-GET /attendance
-POST /attendance
-PUT /attendance/:id
+GET    /attendance
+POST   /attendance
+PUT    /attendance/:id
 DELETE /attendance/:id
 ```
 
@@ -265,9 +326,9 @@ DELETE /attendance/:id
 ## Menu
 
 ```
-GET /menu
-POST /menu
-PUT /menu/:id
+GET    /menu
+POST   /menu
+PUT    /menu/:id
 DELETE /menu/:id
 ```
 
@@ -276,58 +337,47 @@ DELETE /menu/:id
 ## Complaints
 
 ```
-GET /complaints
-POST /complaints
-PUT /complaints/:id
+GET    /complaints
+POST   /complaints
+PUT    /complaints/:id
 DELETE /complaints/:id
 ```
 
 ---
 
-## Notices
+## Dashboard
 
 ```
-GET /notices
-POST /notices
-PUT /notices/:id
-DELETE /notices/:id
+GET /dashboard
 ```
 
 ---
 
-## Activities
-
-```
-GET /activity
-POST /activity
-PUT /activity/:id
-DELETE /activity/:id
-```
-
----
-
-# 🔒 Security
+# 🔒 Security Features
 
 - JWT Authentication
-- Password Encryption
-- Protected Routes
-- Role Based Access
+- Password Hashing using bcrypt
+- Protected API Routes
+- Role-Based Authorization
 - Environment Variables
+- MongoDB Atlas
 - CORS Enabled
 
 ---
 
-# Future Improvements
+# 🚧 Future Improvements
 
 - Email Notifications
-- QR Attendance
-- Meal Booking
-- Online Payments
+- QR Code Attendance
+- Meal Booking System
+- Online Payment Integration
 - Analytics Dashboard
-- Mobile Responsive UI
+- Mobile Responsive Improvements
 - Admin Reports
-- Student Profile
+- Edit Profile
+- Profile Picture Upload
 - Dark Mode
+- Password Reset
 
 ---
 
@@ -335,32 +385,35 @@ DELETE /activity/:id
 
 **Aradhya Patel**
 
-GitHub:
+GitHub
+
 https://github.com/Aradhya6394
 
-LinkedIn:
-(Add your LinkedIn URL)
+LinkedIn
+
+*(Add your LinkedIn profile here)*
 
 ---
 
 # 🤝 Contributing
 
-Contributions are welcome!
+Contributions are always welcome!
 
-1. Fork the project
+1. Fork the repository
+
 2. Create a new branch
 
 ```bash
 git checkout -b feature-name
 ```
 
-3. Commit changes
+3. Commit your changes
 
 ```bash
-git commit -m "Added new feature"
+git commit -m "Add feature"
 ```
 
-4. Push
+4. Push your branch
 
 ```bash
 git push origin feature-name
@@ -370,20 +423,20 @@ git push origin feature-name
 
 ---
 
-# 📜 License
+# 📄 License
 
 This project is licensed under the MIT License.
 
 ---
 
-# ⭐ Show Your Support
+# ⭐ Support
 
-If you like this project,
+If you found this project useful,
 
-⭐ Star this repository
+⭐ Star the repository
 
-🍴 Fork it
+🍴 Fork the project
 
-💡 Contribute to it
+💡 Share your feedback
 
 Thank you for visiting **MessMate** ❤️
