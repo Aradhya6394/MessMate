@@ -265,7 +265,7 @@ npm run dev
 Frontend
 
 ```bash
-npm run start
+npm run build
 ```
 
 Backend
