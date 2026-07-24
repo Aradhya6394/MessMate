@@ -30,20 +30,7 @@ https://mess-mate-xi-seven.vercel.app/
 ### Backend API
 https://messmate-jyhn.onrender.com
 
----
 
-# 📸 Screenshots
-
-> *(Add screenshots here later)*
-
-- Login Page
-- Dashboard
-- Student Management
-- Attendance
-- Complaint Management
-- Profile Page
-
----
 
 # ✨ Features
 
